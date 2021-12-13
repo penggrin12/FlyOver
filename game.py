@@ -46,13 +46,25 @@ def game():
         
         fuelforce = random.randint(1,5)
         upforce = random.randint(1,5)
-        if ALT > 10000:
+        if ALT > 100000:
             downforce = 0
-        else:
+        elif ALT > 10000:
+            downforce = random.randint(0,1)
+        elif ALT > 1000:
             downforce = random.randint(1,3)
+        elif ALT > 0:
+            downforce = random.randint(1,3)
+        elif ALT <= 0:
+            if THRUST < -30:
+                death()
+            ALT = 0
+            SPEED = 0
+            THRUST = 0
+            downforce = 0
         
         if FUEL <= 0:
             ENGINE = False
+            print("No fuel!\nEngine disabled")
         
         if (ENGINE == True) and (THRUST <= MAX_THRUST):
             THRUST = THRUST + upforce
@@ -61,8 +73,6 @@ def game():
             FUEL = FUEL - fuelforce
         elif ENGINE == False:
             if ALT < 0:
-                if THRUST < -100:
-                    death()
                 ALT = 0
                 THRUST = 0
                 SPEED = 0
@@ -78,11 +88,13 @@ def game():
         else:
             formatedEngine = "Disabled"
         
-        print(f"Step: {STEP}\nAlt: {ALT}\nEngine: {formatedEngine}\nFuel: {FUEL}\nSpeed: {SPEED}\nThrust: {THRUST}\n\n1) Enable engine\n2) Disable Engine\n")
-        inputed = input("Action > ")
+        print(f"Step: {STEP}\nAlt: {ALT}\nEngine: {formatedEngine}\nFuel: {FUEL}\nSpeed: {SPEED}\nDown Force: {downforce}\nThrust: {THRUST}\n\n1) Enable engine\n2) Disable Engine")
+        inputed = input("\nAction > ")
             
-        if inputed == "1":
+        if (inputed == "1") and (FUEL > 0):
             ENGINE = True
-        elif inputed == "2":
+            print("Engine enabled")
+        elif (inputed == "2") and (FUEL > 0):
             ENGINE = False
+            print("Engine disabled")
     
