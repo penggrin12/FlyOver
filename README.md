@@ -1,6 +1,11 @@
 # FlyOver
 Basic space-ship simulator using python
 
+# How to run?
+Just double click run.py
+
+# What modules do i need?
+All modules that i currently using is buit-in python modules
+
 # Known bugs
-- Almost every parametr bouncing while on the ground
 - At some point in the air, rocket stuck
