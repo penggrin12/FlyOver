@@ -11,27 +11,13 @@ def run(infFuel):
     
     game()
     
-def death():
-    system("cls")
-    
-    print("You dead!\n\nGame Over")
-    sleep(10)
-    exit()
-    
 def game():
     # Параметры
-    global IS_FUEL_INFINITY
-    global ENGINE
-    global ALT
-    global MAX_THRUST
-    global YEAR
-    global STEP
-    global THRUST
-    global SPEED
-    global FUEL
     
     IS_FUEL_INFINITY = False
     ENGINE = False
+    HOVER = False
+    HOVERALT = 0
     ALT = 0
     MAX_THRUST = 1500
     YEAR = 0
@@ -44,6 +30,7 @@ def game():
     while True:
         STEP = STEP + 1
         
+        # гравитация
         fuelforce = random.randint(1,5)
         upforce = random.randint(1,5)
         if ALT > 100000:
@@ -55,17 +42,23 @@ def game():
         elif ALT > 0:
             downforce = random.randint(1,3)
         elif ALT <= 0:
-            if THRUST < -30:
-                death()
+            if THRUST < -20:
+                system("cls")
+    
+                print("You dead!\n\nGame Over")
+                sleep(10)
+                exit()
             ALT = 0
             SPEED = 0
             THRUST = 0
             downforce = 0
         
+        # выключение двигателя без топлива
         if FUEL <= 0:
             ENGINE = False
             print("No fuel!\nEngine disabled")
         
+        # Двигатель
         if (ENGINE == True) and (THRUST <= MAX_THRUST):
             THRUST = THRUST + upforce
             SPEED = SPEED + (upforce * 2)
@@ -81,20 +74,50 @@ def game():
                 THRUST = THRUST - downforce * 2
                 ALT = ALT + (THRUST / 2)
         
+        if (HOVER == True) and (FUEL > 0):
+            ALT = HOVERALT
+            FUEL = FUEL - 35
+            SPEED = 0
+            THRUST = 0
+        
         system("cls")
         
+        # форматим параметры
         if ENGINE == True:
             formatedEngine = "Enabled"
         else:
             formatedEngine = "Disabled"
-        
-        print(f"Step: {STEP}\nAlt: {ALT}\nEngine: {formatedEngine}\nFuel: {FUEL}\nSpeed: {SPEED}\nDown Force: {downforce}\nThrust: {THRUST}\n\n1) Enable engine\n2) Disable Engine")
-        inputed = input("\nAction > ")
             
-        if (inputed == "1") and (FUEL > 0):
-            ENGINE = True
-            print("Engine enabled")
-        elif (inputed == "2") and (FUEL > 0):
+        if HOVER == True:
+            formatedHover = "Enabled"
+        else:
+            formatedHover = "Disabled"
+        
+        # выключение всего без топлива
+        if FUEL <= 0:
+            FUEL = 0
             ENGINE = False
-            print("Engine disabled")
+            HOVER = False
+        
+        # вывод
+        print(f"Step: {STEP}\nAlt: {ALT}\nEngine: {formatedEngine}\nAuto Hover: {formatedHover}\nFuel: {FUEL}\nSpeed: {SPEED}\nDown Force: {downforce}\nThrust: {THRUST}\n\n")
+        print("1) Engine\n2) Auto Hover")
+        inputed = input("\nAction > ")
+           
+        # обработчик входа
+        if (inputed == "1") and (FUEL > 0):
+            if ENGINE == True:
+                ENGINE = False
+                print("Engine disabled")
+            else:
+                ENGINE = True
+                print("Engine enabled")
+        elif (inputed == "2") and (FUEL > 0):
+            if HOVER == True:
+                HOVER = False
+                print("Auto Hover disabled")
+            else:
+                HOVER = True
+                HOVERALT = ALT
+                print("Auto Hover enabled")
     
